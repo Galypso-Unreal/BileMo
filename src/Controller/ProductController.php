@@ -26,7 +26,7 @@ class ProductController extends AbstractController
         return new JsonResponse($jsonProducts,Response::HTTP_OK,[],true);
     }
 
-    #[Route('/product/{id}', name: 'api_product', methods:'GET')]
+    #[Route('/products/{id}', name: 'api_product', methods:'GET')]
     public function getOneProductById(int $id,ProductRepository $productRepository, SerializerInterface $serializer): JsonResponse
     {
         $product = $productRepository->find($id);
@@ -39,7 +39,7 @@ class ProductController extends AbstractController
         
     }
 
-    #[Route('/product/create', name: 'api_product_create', methods:'POST')]
+    #[Route('/products', name: 'api_product_create', methods:'POST')]
     public function createProduct(ValidatorInterface $validator, Request $request, ProductRepository $productRepository, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
     {
         $product = $serializer->deserialize($request->getContent(),Product::class,'json');
