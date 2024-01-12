@@ -5,12 +5,14 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api', name:"api_")]
@@ -19,11 +21,14 @@ class ProductController extends AbstractController
     #[Route('/products', name: 'api_products', methods:'GET')]
     public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer): JsonResponse
     {
-        $products = $productRepository->findAll();
+        if($this->isGranted("ROLE_ADMIN") === true){
+            $products = $productRepository->findAll();
 
-        $jsonProducts = $serializer->serialize($products,'json');
+            $jsonProducts = $serializer->serialize($products,'json');
 
-        return new JsonResponse($jsonProducts,Response::HTTP_OK,[],true);
+            return new JsonResponse($jsonProducts,Response::HTTP_OK,[],true);
+        }
+        return throw new HttpException('403','You not authorized to see all products');
     }
 
     #[Route('/products/{id}', name: 'api_product', methods:'GET')]
