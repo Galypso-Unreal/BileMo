@@ -1,0 +1,8 @@
+symfony new my_project_directory --version="6.4.*"
+
+composer require symfony/maker-bundle --dev
+composer require orm
+composer require orm-fixtures --dev
+composer require symfony/serializer-pack
+composer require symfony/validator doctrine/annotations
+composer require lexik/jwt-authentication-bundle:3.x-dev
