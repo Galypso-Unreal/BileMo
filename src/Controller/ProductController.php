@@ -15,11 +15,30 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Attributes as OA;
 
 #[Route('/api', name: "api_")]
 class ProductController extends AbstractController
 {
+    
     #[Route('/products', name: 'api_products', methods: 'GET')]
+    /**
+     * The function getAllProducts retrieves a list of products from a cache or database based on the
+     * provided page and limit parameters, and returns the list as a JSON response.
+     * 
+    */
+    #[OA\Response(
+        response: 200,
+        description: 'Returns all products of API',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProducts']))
+        )
+    )]
+    #[OA\Tag(name: 'products')]
+    #[Security(name: 'Bearer')]
     public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
 
