@@ -23,8 +23,15 @@ class ProductRepository extends ServiceEntityRepository
 
     public function findAllWithPagination($page, $limit) {
         $query = $this->createQueryBuilder('p')
+            ->select('p.id, p.model, p.brand, p.color')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
+        return $query->getQuery()->getResult();
+    }
+
+    public function findAllProducts() {
+        $query = $this->createQueryBuilder('p')
+            ->select('p.id, p.model, p.brand, p.color');
         return $query->getQuery()->getResult();
     }
 
