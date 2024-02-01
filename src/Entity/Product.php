@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -12,114 +13,142 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getProducts'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The model is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $model = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "The color is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $color = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The operating system is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $operating_system = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The sim type is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $sim_type = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The number of sims cards is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?int $number_of_sims = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The processsor name is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $processor = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The processor details is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $processor_details = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "The battery capacity is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $battery = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The quick charge is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?bool $quick_charge = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The screen size is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?float $screen_size = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "The screen resolution is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $screen_resolution = null;
 
     #[ORM\Column(length: 20)]
     #[Assert\NotBlank(message: "The network is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $network = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The bluetooth is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?float $bluetooth = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The wifi standard is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $wifi_standard = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The internal memory is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?int $internal_memory = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The ram memory is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?int $ram_memory = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The camera resolution is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?int $camera_resolution = null;
 
     #[ORM\Column(length: 10)]
     #[Assert\NotBlank(message: "The water resistant is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $water_resistant = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The dust resistant is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?bool $dust_resistant = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The shock resistance is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?bool $shock_resistance = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The brand is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $brand = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The made in label is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?string $made_in = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The repairability index is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?float $repairability_index = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The product height is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?float $product_height = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The width is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?float $product_width = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The thickness is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?float $product_thickness = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "The net weight is required and cannot be null")]
+    #[Groups(['getProducts'])]
     private ?float $net_weight = null;
 
     public function getId(): ?int
