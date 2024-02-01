@@ -59,7 +59,7 @@ class ProductController extends AbstractController
             $item->tag("ProductsCache");
 
             if ($page > 0 and $limit == 0) {
-                $productsList = $productRepository->findAll();
+                $productsList = $productRepository->findAllProducts();
             } else {
                 $productsList = $productRepository->findAllWithPagination($page, $limit);
             }
@@ -104,7 +104,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/products', name: 'api_product_create', methods: 'POST')]
-    public function createProduct(ValidatorInterface $validator, Request $request, ProductRepository $productRepository, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
+    public function createProduct(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
     {
         $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
 
