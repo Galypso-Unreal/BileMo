@@ -64,7 +64,7 @@ class ProductController extends AbstractController
                 $productsList = $productRepository->findAllWithPagination($page, $limit);
             }
 
-            return $serializer->serialize($productsList, 'json');
+            return $serializer->serialize($productsList, 'json',['groups' => 'getProducts']);
         });
 
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
@@ -82,7 +82,7 @@ class ProductController extends AbstractController
             $product = $productRepository->find($id);
 
             if ($product) {
-                return $serializer->serialize($product, 'json');
+                return $serializer->serialize($product, 'json',['groups' => 'getProducts']);
             }
             return throw new HttpException('404', "The ID doesn't exists");
         });
@@ -111,13 +111,13 @@ class ProductController extends AbstractController
         $errors = $validator->validate($product);
 
         if ($errors->count() > 0) {
-            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
+            return new JsonResponse($serializer->serialize($errors, 'json',['groups' => 'getProducts']), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
         }
 
         $entityManagerInterface->persist($product);
         $entityManagerInterface->flush();
 
-        $jsonProduct = $serializer->serialize($product, 'json');
+        $jsonProduct = $serializer->serialize($product, 'json',['groups' => 'getProducts']);
 
         return new JsonResponse($jsonProduct, Response::HTTP_CREATED, [], true);
     }

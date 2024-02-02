@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Product;
-use App\Entity\User;
+use App\Entity\Customer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
@@ -38,14 +38,14 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $user = new User();
+        $user = new Customer();
         $user->setEmail("user@test.com");
         $user->setRoles(["ROLE_USER"]);
         $user->setPassword($this->userPasswordHasher->hashPassword($user,"password"));
 
         $manager->persist($user);
 
-        $userAdmin = new User();
+        $userAdmin = new Customer();
         $userAdmin->setEmail("admin@test.com");
         $userAdmin->setRoles(["ROLE_ADMIN"]);
         $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin,"password"));
