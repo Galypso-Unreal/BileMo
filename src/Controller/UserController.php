@@ -62,7 +62,7 @@ class UserController extends AbstractController
             if ($page > 0 and $limit == 0) {
                 $productsList = $userRepository->findAllUsers($this->getUser());
             } else {
-                // $productsList = $userRepository->findAllWithPagination($page, $limit);
+                $productsList = $userRepository->findAllWithPagination($page, $limit);
             }
 
             return $serializer->serialize($productsList, 'json',['groups' => 'getUsers']);
@@ -82,7 +82,7 @@ class UserController extends AbstractController
         $jsonUser = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $serializer, $id) {
             $item->tag("UsersCache");
 
-            $user = $userRepository->find($this->getUser(),$id);
+            $user = $userRepository->findById($id,$this->getUser());
 
             if ($user) {
                 return $serializer->serialize($user, 'json',['groups' => 'getUsers']);

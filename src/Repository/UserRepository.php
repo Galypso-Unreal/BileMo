@@ -48,12 +48,12 @@ class UserRepository extends ServiceEntityRepository
        ;
    }
 
-   public function findById($value,$value2): array
+   public function findById($value, $value2): array
    {
        return $this->createQueryBuilder('u')
-                  ->andWhere('u.id = :val')
-                  ->andWhere('u.customer = :val2')
+                  ->where('u.id = :val')
                   ->setParameter('val', $value)
+                  ->andWhere('u.customer = :val2')
                   ->setParameter('val2', $value2)
                   ->orderBy('u.id', 'ASC')
                   ->getQuery()
