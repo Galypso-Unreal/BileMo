@@ -91,4 +91,18 @@ class UserController extends AbstractController
         });
         return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
     }
+
+    #[Route('/users/{id}', name: 'api_delete_user', methods: 'DELETE')]
+    public function deleteUser(int $id, UserRepository $userRepository, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
+    {
+        $user = $userRepository->findOneById($id,$this->getUser());
+
+        if ($user) {
+            $cache->invalidateTags(['ProductsCache']);
+            $entityManagerInterface->remove($user);
+            $entityManagerInterface->flush();
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        }
+        return throw new HttpException('404', "The ID doesn't exists");
+    }
 }
