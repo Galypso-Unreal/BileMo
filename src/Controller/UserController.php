@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +17,47 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Attributes as OA;
 
 #[Route('/api', name: "api_")]
 class UserController extends AbstractController
 {
+    #[OA\Response(
+        response: 201,
+        description: 'Create an user',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: User::class, groups: ['getUsers']))
+        )
+    )]
+    #[OA\Parameter(
+        name: 'firstname',
+        description: 'The firstname of user you want to add',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Parameter(
+        name: 'lastname',
+        description: 'The lastname of user you want to add',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Parameter(
+        name: 'email',
+        description: 'The email of user you want to add',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Parameter(
+        name: 'password',
+        description: 'The password (without encrypt) of user you want to add',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Parameter(
+        name: 'customer',
+        description: 'The field is an auto value of your customer id',
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Tag(name: 'users')]
+    #[Security(name: 'Bearer')]
     #[Route('/users', name: 'api_create_user', methods: 'POST')]
     public function createUser(UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
     {
@@ -28,7 +66,7 @@ class UserController extends AbstractController
         $errors = $validator->validate($user);
 
         if ($errors->count() > 0) {
-            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
+            return new JsonResponse($serializer->serialize($errors, 'json',['groups' => 'createUser']), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
         }
         
         $user->setPassword($passwordHasher->hashPassword($user,$user->getPassword()));

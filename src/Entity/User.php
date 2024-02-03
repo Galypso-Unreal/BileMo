@@ -27,7 +27,7 @@ class User implements PasswordAuthenticatedUserInterface
         minMessage: 'Your firstname must be at least {{ limit }} characters long',
         maxMessage: 'Your firstname cannot be longer than {{ limit }} characters',
     )]
-    #[Groups(['getUsers'])]
+    #[Groups(['getUsers', 'createUser'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
@@ -38,7 +38,7 @@ class User implements PasswordAuthenticatedUserInterface
         minMessage: 'Your lastname must be at least {{ limit }} characters long',
         maxMessage: 'Your lastname cannot be longer than {{ limit }} characters',
     )]
-    #[Groups(['getUsers'])]
+    #[Groups(['getUsers', 'createUser'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 180)]
@@ -49,7 +49,7 @@ class User implements PasswordAuthenticatedUserInterface
         minMessage: 'Your email must be at least {{ limit }} characters long',
         maxMessage: 'Your email cannot be longer than {{ limit }} characters',
     )]
-    #[Groups(['getUsers'])]
+    #[Groups(['getUsers', 'createUser'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -60,7 +60,7 @@ class User implements PasswordAuthenticatedUserInterface
         minMessage: 'Your password must be at least {{ limit }} characters long',
         maxMessage: 'Your password cannot be longer than {{ limit }} characters',
     )]
-    #[Groups(['getUsers'])]
+    #[Groups(['getUsers', 'createUser'])]
     private ?string $password = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
