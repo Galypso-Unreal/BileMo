@@ -27,15 +27,29 @@ class ProductController extends AbstractController
     /**
      * The function getAllProducts retrieves a list of products from a cache or database based on the
      * provided page and limit parameters, and returns the list as a JSON response.
-     * 
+     * example of request with parameters : http://localhost:8000/api/products/?page=1&limit=2
     */
     #[OA\Response(
         response: 200,
         description: 'Returns all products of API',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProducts']))
+            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProduct']))
         )
+    )]
+    #[OA\Parameter(
+        name: 'page',
+        in: 'query',
+        required: false,
+        description: 'The field used to get number of page do you want to recive',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Parameter(
+        name: 'limit',
+        in: 'query',
+        required: false,
+        description: 'The field used to get number of products do you want per page',
+        schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'products')]
     #[Security(name: 'Bearer')]
@@ -64,13 +78,34 @@ class ProductController extends AbstractController
                 $productsList = $productRepository->findAllWithPagination($page, $limit);
             }
 
-            return $serializer->serialize($productsList, 'json',['groups' => 'getProducts']);
+            return $serializer->serialize($productsList, 'json',['groups' => 'getProduct']);
         });
 
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
     }
 
     #[Route('/products/{id}', name: 'api_product', methods: 'GET')]
+    /**
+     * This function retrieves a product by its ID from a cache or database, serializes it to JSON, and
+     * returns it as a JSON response.
+     * example of request with parameters : http://localhost:8000/api/products/2 : 2 is the id of product
+     */
+    #[OA\Response(
+        response: 200,
+        description: 'Returns one product of API',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProducts']))
+        )
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'The ID of the product you want to retrieve',
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Tag(name: 'products')]
+    #[Security(name: 'Bearer')]
     public function getOneProductById(int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
 
