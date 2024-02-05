@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query as ORMQuery;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -34,6 +35,16 @@ class ProductRepository extends ServiceEntityRepository
             ->select('p.id, p.model, p.brand, p.color');
         return $query->getQuery()->getResult();
     }
+
+       public function findById($value): array
+       {
+           return $this->createQueryBuilder('p')
+               ->andWhere('p.id = :val')
+               ->setParameter('val', $value)
+               ->getQuery()
+               ->getOneOrNullResult(ORMQuery::HYDRATE_ARRAY)
+           ;
+       }
 
 //    /**
 //     * @return Product[] Returns an array of Product objects

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use App\Service\FetchLinks;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +24,7 @@ use OpenApi\Attributes as OA;
 class ProductController extends AbstractController
 {
     
-    #[Route('/products', name: 'api_products', methods: 'GET')]
+    #[Route('/products', name: 'products', methods: 'GET')]
     /**
      * The function getAllProducts retrieves a list of products from a cache or database based on the
      * provided page and limit parameters, and returns the list as a JSON response.
@@ -84,7 +85,7 @@ class ProductController extends AbstractController
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/products/{id}', name: 'api_product', methods: 'GET')]
+    #[Route('/products/{id}', name: 'product', methods: 'GET')]
     /**
      * This function retrieves a product by its ID from a cache or database, serializes it to JSON, and
      * returns it as a JSON response.
@@ -106,25 +107,29 @@ class ProductController extends AbstractController
     )]
     #[OA\Tag(name: 'products')]
     #[Security(name: 'Bearer')]
-    public function getOneProductById(int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
+    public function getOneProductById(FetchLinks $fetchLink, int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
 
         $idCache = "getOneProduct-" . $id;
 
-        $jsonProduct = $cache->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer, $id) {
+        $jsonProduct = $cache->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer, $id, $fetchLink) {
             $item->tag("ProductsCache");
 
-            $product = $productRepository->find($id);
+            $product = $productRepository->findById($id);
+
+            $links = $fetchLink->generateLinks("product",$id);
+
+            $merge = $fetchLink->merge($product,$links);
 
             if ($product) {
-                return $serializer->serialize($product, 'json',['groups' => 'getProducts']);
+                return $serializer->serialize($merge, 'json',['groups' => 'getProducts', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
             }
             return throw new HttpException('404', "The ID doesn't exists");
         });
         return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/products/{id}', name: 'api_delete_product', methods: 'DELETE')]
+    #[Route('/products/{id}', name: 'delete_product', methods: 'DELETE')]
     public function deleteOneProductById(int $id, EntityManagerInterface $entityManagerInterface, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $product = $productRepository->find($id);
@@ -138,7 +143,7 @@ class ProductController extends AbstractController
         return throw new HttpException('404', "The ID doesn't exists");
     }
 
-    #[Route('/products', name: 'api_product_create', methods: 'POST')]
+    #[Route('/products', name: 'create_product', methods: 'POST')]
     public function createProduct(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
     {
         $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
