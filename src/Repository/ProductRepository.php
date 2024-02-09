@@ -27,7 +27,7 @@ class ProductRepository extends ServiceEntityRepository
             ->select('p.id, p.model, p.brand, p.color')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
-        return $query->getQuery()->getResult();
+        return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
     }
 
     public function findAllProducts() {

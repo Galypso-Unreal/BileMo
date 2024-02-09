@@ -35,7 +35,7 @@ class ProductController extends AbstractController
         description: 'Returns all products of API',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProduct']))
+            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProducts']))
         )
     )]
     #[OA\Parameter(
@@ -54,7 +54,7 @@ class ProductController extends AbstractController
     )]
     #[OA\Tag(name: 'products')]
     #[Security(name: 'Bearer')]
-    public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
+    public function getAllProducts(FetchLinks $fetchLink, ProductRepository $productRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
 
         $page = $request->get('page', 1);
@@ -70,16 +70,24 @@ class ProductController extends AbstractController
         $idCache = "getAllProducts-" . $page . "-" . $limit;
 
 
-        $jsonProductsList = $cache->get($idCache, function (ItemInterface $item) use ($productRepository, $page, $limit, $serializer) {
+        $jsonProductsList = $cache->get($idCache, function (ItemInterface $item) use ($productRepository, $page, $limit, $serializer, $fetchLink) {
             $item->tag("ProductsCache");
-
             if ($page > 0 and $limit == 0) {
                 $productsList = $productRepository->findAllProducts();
+                return $serializer->serialize($productsList, 'json',['groups' => 'getProducts']);
             } else {
-                $productsList = $productRepository->findAllWithPagination($page, $limit);
+
+                $productList = $productRepository->findAllWithPagination($page, $limit);
+                $productList_next = $productRepository->findAllWithPagination($page + 1, $limit);
+
+                $links = $fetchLink->generatePaginationLinks("products", $limit, $page, $productList_next);
+
+                $merge = $fetchLink->merge($productList,$links,"products");
+
+                return $serializer->serialize($merge, 'json',['groups' => 'getProducts', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
             }
 
-            return $serializer->serialize($productsList, 'json',['groups' => 'getProduct']);
+            
         });
 
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
@@ -96,7 +104,7 @@ class ProductController extends AbstractController
         description: 'Returns one product of API',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProducts']))
+            items: new OA\Items(ref: new Model(type: Product::class, groups: ['getProduct']))
         )
     )]
     #[OA\Parameter(
@@ -117,12 +125,12 @@ class ProductController extends AbstractController
 
             $product = $productRepository->findById($id);
 
-            $links = $fetchLink->generateLinks("product",$id);
-
-            $merge = $fetchLink->merge($product,$links);
-
             if ($product) {
-                return $serializer->serialize($merge, 'json',['groups' => 'getProducts', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
+                $links = $fetchLink->generateLinks("product",$id);
+
+                $merge = $fetchLink->merge($product,$links);
+
+                return $serializer->serialize($merge, 'json',['groups' => 'getProduct', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
             }
             return throw new HttpException('404', "The ID doesn't exists");
         });

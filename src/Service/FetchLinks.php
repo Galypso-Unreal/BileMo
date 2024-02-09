@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Repository\UserRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class FetchLinks
@@ -64,9 +65,57 @@ class FetchLinks
         return $array;
     }
 
-    public function merge($array1, $array2){
+    public function generatePaginationLinks($name,$limit,$page, $repository): array{
 
-        return $array1 + $array2;
+        try {
+            $page_prev = $page -1;
+            if($page > 0){
+                $previous_page = $this->router->generate("api_".$name,["limit"=>$limit, "page" => $page_prev]);
+            }
+            
+        } catch (\Throwable $th) {
+            
+        }
+
+        try {
+            $next_page = $this->router->generate("api_".$name, ["limit"=>$limit, "page" => $page + 1]);
+            
+        } catch (\Throwable $th) {
+            
+        }
+
+        $array = [
+            "_links"=> []
+        ];
+
+
+        if(isset($previous_page)){
+            
+            $array["_links"]['previous_page'] = $previous_page;
+        }
+
+        if(isset($next_page) && !empty($repository)){
+            $array["_links"]['next_page'] = $next_page;
+        }
+        
+
+        return $array;
+    }
+
+    public function merge(array $array1, array $array2, string $name = null){
+
+        if(isset($name)){
+            $array = array(
+                $name => $array1,
+            );
+    
+            return $array + $array2;
+        }else{
+
+            return $array1 + $array2;
+        }
+
+        
 
     }
 }
