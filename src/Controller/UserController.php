@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\FetchLinks;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,13 +55,13 @@ class UserController extends AbstractController
     )]
     #[OA\Tag(name: 'users')]
     #[Security(name: 'Bearer')]
-    #[Route('/users', name: 'api_create_user', methods: 'POST')]
+    #[Route('/users', name: 'create_user', methods: 'POST')]
     /**
      * This function creates a user by deserializing the request content, validating the user data,
      * hashing the password, and persisting the user in the database.
      * 
      */
-    public function createUser(UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
+    public function createUser(UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface,TagAwareCacheInterface $cache): JsonResponse
     {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
 
@@ -69,7 +70,7 @@ class UserController extends AbstractController
         if ($errors->count() > 0) {
             return new JsonResponse($serializer->serialize($errors, 'json',['groups' => 'createUser']), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
         }
-        
+        $cache->invalidateTags(['UsersCache']);
         $user->setPassword($passwordHasher->hashPassword($user,$user->getPassword()));
         $user->setCustomer($this->getUser());
         $entityManagerInterface->persist($user);
@@ -102,12 +103,12 @@ class UserController extends AbstractController
     )]
     #[OA\Tag(name: 'users')]
     #[Security(name: 'Bearer')]
-    #[Route('/users', name: 'api_get_users', methods: 'GET')]
+    #[Route('/users', name: 'users', methods: 'GET')]
     /**
      * This function retrieves a list of users from a repository, serializes it into JSON format, and
      * returns it as a JSON response.
      */
-    public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
+    public function getAllUsers(FetchLinks $fetchLink, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
 
         $page = $request->get('page', 1);
@@ -122,17 +123,27 @@ class UserController extends AbstractController
          */
         $idCache = "getAllUsers-" . $page . "-" . $limit;
 
-
-        $jsonUsersList = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $page, $limit, $serializer) {
+        $jsonUsersList = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $page, $limit, $serializer, $fetchLink) {
             $item->tag("UsersCache");
 
             if ($page > 0 and $limit == 0) {
-                $productsList = $userRepository->findAllUsers($this->getUser());
+                $usersList = $userRepository->findAllUsers($this->getUser());
+
+                return $serializer->serialize($usersList, 'json',['groups' => 'getUsers']);
+
             } else {
-                $productsList = $userRepository->findAllWithPagination($page, $limit);
+
+                $usersList = $userRepository->findAllWithPagination($page, $limit);
+                $userList_next = $userRepository->findAllWithPagination($page + 1, $limit);
+
+                $links = $fetchLink->generatePaginationLinks("users", $limit, $page, $userList_next);
+
+                $merge = $fetchLink->merge($usersList,$links,"users");
+
+                return $serializer->serialize($merge, 'json',['groups' => 'getUsers', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
             }
 
-            return $serializer->serialize($productsList, 'json',['groups' => 'getUsers']);
+            
         });
 
         return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
@@ -155,25 +166,29 @@ class UserController extends AbstractController
     )]
     #[OA\Tag(name: 'users')]
     #[Security(name: 'Bearer')]
-    #[Route('/users/{id}', name: 'api_get_user', methods: 'GET')]
+    #[Route('/users/{id}', name: 'user', methods: 'GET')]
     /**
      * This function retrieves a user by their ID from a repository, serializes it into JSON format,
      * and caches the result using a cache service.
      */
-    public function getOneUserById(int $id, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
+    public function getOneUserById(FetchLinks $fetchLink, int $id, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
         /**
          * Create an ID cache
          */
         $idCache = "getOneUser-" . $id;
-
-        $jsonUser = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $serializer, $id) {
+       
+        $jsonUser = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $serializer, $id, $fetchLink) {
             $item->tag("UsersCache");
 
             $user = $userRepository->findById($id,$this->getUser());
 
             if ($user) {
-                return $serializer->serialize($user, 'json',['groups' => 'getUsers']);
+                $links = $fetchLink->generateLinks("user",$id);
+
+                $merge = $fetchLink->merge($user[0],$links);
+
+                return $serializer->serialize($merge, 'json',['groups' => 'getUsers', 'json_encode_options' => JSON_UNESCAPED_SLASHES], );
             }
             return throw new HttpException('404', "The ID doesn't exists");
         });
@@ -193,7 +208,7 @@ class UserController extends AbstractController
     )]
     #[OA\Tag(name: 'users')]
     #[Security(name: 'Bearer')]
-    #[Route('/users/{id}', name: 'api_delete_user', methods: 'DELETE')]
+    #[Route('/users/{id}', name: 'delete_user', methods: 'DELETE')]
     /**
      * The deleteUser function deletes a user from the database and invalidates the cache for products.
      * 

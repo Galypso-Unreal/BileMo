@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query as ORMQuery;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -44,9 +45,17 @@ class UserRepository extends ServiceEntityRepository
                   ->setParameter('val', $value)
                   ->orderBy('u.id', 'ASC')
                   ->getQuery()
-                  ->getResult()
+                  ->getResult(ORMQuery::HYDRATE_ARRAY)
        ;
    }
+
+   public function findAllWithPagination($page, $limit) {
+    $query = $this->createQueryBuilder('u')
+        ->select('u.id, u.email')
+        ->setFirstResult(($page - 1) * $limit)
+        ->setMaxResults($limit);
+    return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
+}
 
    public function findById($value, $value2): array
    {
@@ -57,7 +66,7 @@ class UserRepository extends ServiceEntityRepository
                   ->setParameter('val2', $value2)
                   ->orderBy('u.id', 'ASC')
                   ->getQuery()
-                  ->getResult()
+                  ->getResult(ORMQuery::HYDRATE_ARRAY)
        ;
    }
 
