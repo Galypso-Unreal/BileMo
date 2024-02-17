@@ -61,7 +61,7 @@ class UserController extends AbstractController
      * hashing the password, and persisting the user in the database.
      * 
      */
-    public function createUser(UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
+    public function createUser(UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface,TagAwareCacheInterface $cache): JsonResponse
     {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
 
@@ -70,7 +70,7 @@ class UserController extends AbstractController
         if ($errors->count() > 0) {
             return new JsonResponse($serializer->serialize($errors, 'json',['groups' => 'createUser']), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
         }
-        
+        $cache->invalidateTags(['UsersCache']);
         $user->setPassword($passwordHasher->hashPassword($user,$user->getPassword()));
         $user->setCustomer($this->getUser());
         $entityManagerInterface->persist($user);
@@ -177,17 +177,16 @@ class UserController extends AbstractController
          * Create an ID cache
          */
         $idCache = "getOneUser-" . $id;
-
+       
         $jsonUser = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $serializer, $id, $fetchLink) {
             $item->tag("UsersCache");
 
             $user = $userRepository->findById($id,$this->getUser());
 
             if ($user) {
-
                 $links = $fetchLink->generateLinks("user",$id);
 
-                $merge = $fetchLink->merge($user,$links);
+                $merge = $fetchLink->merge($user[0],$links);
 
                 return $serializer->serialize($merge, 'json',['groups' => 'getUsers', 'json_encode_options' => JSON_UNESCAPED_SLASHES], );
             }

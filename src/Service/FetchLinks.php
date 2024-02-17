@@ -68,8 +68,9 @@ class FetchLinks
     public function generatePaginationLinks($name,$limit,$page, $repository): array{
 
         try {
-            $page_prev = $page -1;
-            if($page > 0){
+
+            $page_prev = $page - 1;
+            if($page_prev > 0){
                 $previous_page = $this->router->generate("api_".$name,["limit"=>$limit, "page" => $page_prev]);
             }
             

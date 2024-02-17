@@ -69,7 +69,6 @@ class ProductController extends AbstractController
          */
         $idCache = "getAllProducts-" . $page . "-" . $limit;
 
-
         $jsonProductsList = $cache->get($idCache, function (ItemInterface $item) use ($productRepository, $page, $limit, $serializer, $fetchLink) {
             $item->tag("ProductsCache");
             if ($page > 0 and $limit == 0) {
@@ -152,7 +151,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/products', name: 'create_product', methods: 'POST')]
-    public function createProduct(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface): JsonResponse
+    public function createProduct(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
 
@@ -164,7 +163,7 @@ class ProductController extends AbstractController
 
         $entityManagerInterface->persist($product);
         $entityManagerInterface->flush();
-
+        $cache->invalidateTags(['ProductsCache']);
         $jsonProduct = $serializer->serialize($product, 'json',['groups' => 'getProducts']);
 
         return new JsonResponse($jsonProduct, Response::HTTP_CREATED, [], true);

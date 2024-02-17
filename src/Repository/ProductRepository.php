@@ -33,7 +33,7 @@ class ProductRepository extends ServiceEntityRepository
     public function findAllProducts() {
         $query = $this->createQueryBuilder('p')
             ->select('p.id, p.model, p.brand, p.color');
-        return $query->getQuery()->getResult();
+        return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
     }
 
        public function findById($value): array
