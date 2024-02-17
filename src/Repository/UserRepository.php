@@ -79,7 +79,7 @@ class UserRepository extends ServiceEntityRepository
                   ->setParameter('val2', $value2)
                   ->orderBy('u.id', 'ASC')
                   ->getQuery()
-                  ->getOneOrNullResult(ORMQuery::HYDRATE_ARRAY)
+                  ->getOneOrNullResult()
        ;
    }
 }
