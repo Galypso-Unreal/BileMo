@@ -39,16 +39,19 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
     {
         return $this->id;
+
     }
 
     public function getEmail(): ?string
     {
         return $this->email;
+
     }
 
     public function setEmail(string $email): static
@@ -56,6 +59,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
 
         return $this;
+
     }
 
     /**
@@ -66,6 +70,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
+
     }
 
     /**
@@ -78,6 +83,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+
     }
 
     public function setRoles(array $roles): static
@@ -85,6 +91,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = $roles;
 
         return $this;
+
     }
 
     /**
@@ -93,6 +100,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): string
     {
         return $this->password;
+
     }
 
     public function setPassword(string $password): static
@@ -100,6 +108,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
+
     }
 
     /**
@@ -117,6 +126,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUsers(): Collection
     {
         return $this->users;
+
     }
 
     public function addUser(User $user): static
@@ -127,6 +137,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+
     }
 
     public function removeUser(User $user): static
@@ -139,5 +150,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+
     }
 }

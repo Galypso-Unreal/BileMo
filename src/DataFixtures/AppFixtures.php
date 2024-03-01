@@ -19,6 +19,7 @@ class AppFixtures extends Fixture
     {
         $this->userPasswordHasher = $userPasswordHasher;
         $this->cache = $cache;
+
     }
 
     public function getRandomValueInArray(array $array)
@@ -35,6 +36,7 @@ class AppFixtures extends Fixture
         }
 
         return throw new Exception("This is not an array !");
+        
     }
 
     public function load(ObjectManager $manager): void
@@ -354,5 +356,6 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
+        
     }
 }

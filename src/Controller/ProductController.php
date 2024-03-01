@@ -67,11 +67,11 @@ class ProductController extends AbstractController
         /**
          * Create an ID cache
          */
-        $idCache = "getAllProducts-" . $page . "-" . $limit;
+        $idCache = "getAllProducts-".$page."-".$limit;
 
         $jsonProductsList = $cache->get($idCache, function (ItemInterface $item) use ($productRepository, $page, $limit, $serializer, $fetchLink) {
             $item->tag("ProductsCache");
-            if ($page > 0 and $limit == 0) {
+            if ($page > 0 and $limit === 0) {
                 $productsList = $productRepository->findAllProducts();
                 return $serializer->serialize($productsList, 'json', ['groups' => 'getProducts']);
             } else {
@@ -88,6 +88,7 @@ class ProductController extends AbstractController
         });
 
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
+
     }
 
     #[Route('/products/{id}', name: 'product', methods: 'GET')]
@@ -114,7 +115,7 @@ class ProductController extends AbstractController
     public function getOneProductById(FetchLinks $fetchLink, int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
 
-        $idCache = "getOneProduct-" . $id;
+        $idCache = "getOneProduct-".$id;
 
         $jsonProduct = $cache->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer, $id, $fetchLink) {
             $item->tag("ProductsCache");
@@ -131,6 +132,7 @@ class ProductController extends AbstractController
             return throw new HttpException('404', "The ID doesn't exists");
         });
         return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
+
     }
     #[Route('/products/{id}', name: 'delete_product', methods: 'DELETE')]
     public function deleteOneProductById(int $id, EntityManagerInterface $entityManagerInterface, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
@@ -144,6 +146,7 @@ class ProductController extends AbstractController
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
         return throw new HttpException('404', "The ID doesn't exists");
+
     }
     #[Route('/products', name: 'create_product', methods: 'POST')]
     public function createProduct(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
@@ -162,5 +165,6 @@ class ProductController extends AbstractController
         $jsonProduct = $serializer->serialize($product, 'json', ['groups' => 'getProducts']);
 
         return new JsonResponse($jsonProduct, Response::HTTP_CREATED, [], true);
+        
     }
 }

@@ -74,6 +74,7 @@ class UserController extends AbstractController
         $entityManagerInterface->flush();
 
         return new JsonResponse(json_encode(["response" => "User has been created"]), Response::HTTP_CREATED, [], true);
+
     }
 
     #[OA\Response(
@@ -118,12 +119,12 @@ class UserController extends AbstractController
         /**
          * Create an ID cache
          */
-        $idCache = "getAllUsers-" . $page . "-" . $limit;
+        $idCache = "getAllUsers-".$page."-".$limit;
 
         $jsonUsersList = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $page, $limit, $serializer, $fetchLink) {
             $item->tag("UsersCache");
 
-            if ($page > 0 and $limit == 0) {
+            if ($page > 0 and $limit === 0) {
                 $usersList = $userRepository->findAllUsers($this->getUser());
 
                 return $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
@@ -141,6 +142,7 @@ class UserController extends AbstractController
         });
 
         return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
+
     }
 
     #[OA\Response(
@@ -170,7 +172,7 @@ class UserController extends AbstractController
         /**
          * Create an ID cache
          */
-        $idCache = "getOneUser-" . $id;
+        $idCache = "getOneUser-".$id;
 
         $jsonUser = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $serializer, $id, $fetchLink) {
             $item->tag("UsersCache");
@@ -187,6 +189,7 @@ class UserController extends AbstractController
             return throw new HttpException('404', "The ID doesn't exists");
         });
         return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
+
     }
 
     #[OA\Response(
@@ -218,5 +221,6 @@ class UserController extends AbstractController
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
         return throw new HttpException('404', "The ID doesn't exists");
+        
     }
 }

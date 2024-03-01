@@ -16,22 +16,22 @@ class FetchLinks
     public function generateLinks(string $name, $id): array
     {
         try {
-            $self = $this->router->generate("api_" . $name, ['id' => $id]);
+            $self = $this->router->generate("api_".$name, ['id' => $id]);
         } catch (\Throwable $th) {
         }
 
         try {
-            $create = $this->router->generate("api_create_" . $name);
+            $create = $this->router->generate("api_create_".$name);
         } catch (\Throwable $th) {
         }
 
         try {
-            $update = $this->router->generate("api_update_" . $name, ['id' => $id]);
+            $update = $this->router->generate("api_update_".$name, ['id' => $id]);
         } catch (\Throwable $th) {
         }
 
         try {
-            $delete = $this->router->generate("api_delete_" . $name, ['id' => $id]);
+            $delete = $this->router->generate("api_delete_".$name, ['id' => $id]);
         } catch (\Throwable $th) {
         }
 
@@ -68,13 +68,13 @@ class FetchLinks
 
             $page_prev = $page - 1;
             if ($page_prev > 0) {
-                $previous_page = $this->router->generate("api_" . $name, ["limit" => $limit, "page" => $page_prev]);
+                $previous_page = $this->router->generate("api_".$name, ["limit" => $limit, "page" => $page_prev]);
             }
         } catch (\Throwable $th) {
         }
 
         try {
-            $next_page = $this->router->generate("api_" . $name, ["limit" => $limit, "page" => $page + 1]);
+            $next_page = $this->router->generate("api_".$name, ["limit" => $limit, "page" => $page + 1]);
         } catch (\Throwable $th) {
         }
 
@@ -94,6 +94,7 @@ class FetchLinks
 
 
         return $array;
+
     }
 
     public function merge(array $array1, array $array2, string $name = null)
@@ -109,5 +110,6 @@ class FetchLinks
 
             return $array1 + $array2;
         }
+        
     }
 }
