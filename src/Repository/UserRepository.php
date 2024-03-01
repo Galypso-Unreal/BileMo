@@ -22,64 +22,62 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return User[] Returns an array of User objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('u.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-   public function findAllUsers($value): array
-   {
-       return $this->createQueryBuilder('u')
-                  ->select('u.id, u.email')
-                  ->andWhere('u.customer = :val')
-                  ->setParameter('val', $value)
-                  ->orderBy('u.id', 'ASC')
-                  ->getQuery()
-                  ->getResult(ORMQuery::HYDRATE_ARRAY)
-       ;
-   }
+    public function findAllUsers($value): array
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u.id, u.email')
+            ->andWhere('u.customer = :val')
+            ->setParameter('val', $value)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult(ORMQuery::HYDRATE_ARRAY);
+    }
 
-   public function findAllWithPagination($page, $limit) {
-    $query = $this->createQueryBuilder('u')
-        ->select('u.id, u.email')
-        ->setFirstResult(($page - 1) * $limit)
-        ->setMaxResults($limit);
-    return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
-}
+    public function findAllWithPagination($page, $limit)
+    {
+        $query = $this->createQueryBuilder('u')
+            ->select('u.id, u.email')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+        return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
+    }
 
-   public function findById($value, $value2): array
-   {
-       return $this->createQueryBuilder('u')
-                  ->where('u.id = :val')
-                  ->setParameter('val', $value)
-                  ->andWhere('u.customer = :val2')
-                  ->setParameter('val2', $value2)
-                  ->orderBy('u.id', 'ASC')
-                  ->getQuery()
-                  ->getResult(ORMQuery::HYDRATE_ARRAY)
-       ;
-   }
+    public function findById($value, $value2): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.id = :val')
+            ->setParameter('val', $value)
+            ->andWhere('u.customer = :val2')
+            ->setParameter('val2', $value2)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult(ORMQuery::HYDRATE_ARRAY);
+    }
 
-   public function findOneById($value, $value2): ?User
-   {
-       return $this->createQueryBuilder('u')
-                  ->where('u.id = :val')
-                  ->setParameter('val', $value)
-                  ->andWhere('u.customer = :val2')
-                  ->setParameter('val2', $value2)
-                  ->orderBy('u.id', 'ASC')
-                  ->getQuery()
-                  ->getOneOrNullResult()
-       ;
-   }
+    public function findOneById($value, $value2): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.id = :val')
+            ->setParameter('val', $value)
+            ->andWhere('u.customer = :val2')
+            ->setParameter('val2', $value2)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
