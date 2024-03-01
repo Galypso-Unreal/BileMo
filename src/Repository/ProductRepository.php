@@ -22,7 +22,8 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findAllWithPagination($page, $limit) {
+    public function findAllWithPagination($page, $limit)
+    {
         $query = $this->createQueryBuilder('p')
             ->select('p.id, p.model, p.brand, p.color')
             ->setFirstResult(($page - 1) * $limit)
@@ -30,44 +31,44 @@ class ProductRepository extends ServiceEntityRepository
         return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
     }
 
-    public function findAllProducts() {
+    public function findAllProducts()
+    {
         $query = $this->createQueryBuilder('p')
             ->select('p.id, p.model, p.brand, p.color');
         return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
     }
 
-       public function findById($value): array
-       {
-           return $this->createQueryBuilder('p')
-               ->andWhere('p.id = :val')
-               ->setParameter('val', $value)
-               ->getQuery()
-               ->getOneOrNullResult(ORMQuery::HYDRATE_ARRAY)
-           ;
-       }
+    public function findById($value): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult(ORMQuery::HYDRATE_ARRAY);
+    }
 
-//    /**
-//     * @return Product[] Returns an array of Product objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Product[] Returns an array of Product objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('p.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Product
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Product
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

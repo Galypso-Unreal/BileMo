@@ -21,9 +21,10 @@ class AppFixtures extends Fixture
         $this->cache = $cache;
     }
 
-    public function getRandomValueInArray(array $array){
+    public function getRandomValueInArray(array $array)
+    {
 
-        if(is_array($array) === true){
+        if (is_array($array) === true) {
             // Get random key from array
 
             $random_key = array_rand($array);
@@ -41,14 +42,14 @@ class AppFixtures extends Fixture
         $user = new Customer();
         $user->setEmail("user@test.com");
         $user->setRoles(["ROLE_USER"]);
-        $user->setPassword($this->userPasswordHasher->hashPassword($user,"password"));
+        $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
 
         $manager->persist($user);
 
         $userAdmin = new Customer();
         $userAdmin->setEmail("admin@test.com");
         $userAdmin->setRoles(["ROLE_ADMIN"]);
-        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin,"password"));
+        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
 
         $manager->persist($userAdmin);
 
@@ -346,7 +347,7 @@ class AppFixtures extends Fixture
             ];
 
             $product->setNetWeight($this->getRandomValueInArray($weight));
-            
+
             $manager->persist($product);
 
             $this->cache->invalidateTags(['ProductsCache']);

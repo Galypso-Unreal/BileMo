@@ -13,17 +13,17 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getProducts','getProduct'])]
+    #[Groups(['getProducts', 'getProduct'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The model is required and cannot be null")]
-    #[Groups(['getProducts','getProduct'])]
+    #[Groups(['getProducts', 'getProduct'])]
     private ?string $model = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: "The color is required and cannot be null")]
-    #[Groups(['getProducts','getProduct'])]
+    #[Groups(['getProducts', 'getProduct'])]
     private ?string $color = null;
 
     #[ORM\Column(length: 100)]
@@ -118,7 +118,7 @@ class Product
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: "The brand is required and cannot be null")]
-    #[Groups(['getProducts','getProduct'])]
+    #[Groups(['getProducts', 'getProduct'])]
     private ?string $brand = null;
 
     #[ORM\Column(length: 100)]

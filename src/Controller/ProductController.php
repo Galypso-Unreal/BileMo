@@ -23,13 +23,13 @@ use OpenApi\Attributes as OA;
 #[Route('/api', name: "api_")]
 class ProductController extends AbstractController
 {
-    
+
     #[Route('/products', name: 'products', methods: 'GET')]
     /**
      * The function getAllProducts retrieves a list of products from a cache or database based on the
      * provided page and limit parameters, and returns the list as a JSON response.
      * example of request with parameters : http://localhost:8000/api/products/?page=1&limit=2
-    */
+     */
     #[OA\Response(
         response: 200,
         description: 'Returns all products of API',
@@ -40,14 +40,14 @@ class ProductController extends AbstractController
     )]
     #[OA\Parameter(
         name: 'page',
-        in: 'query',
+        in: 'path',
         required: false,
         description: 'The field used to get number of page do you want to recive',
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Parameter(
         name: 'limit',
-        in: 'query',
+        in: 'path',
         required: false,
         description: 'The field used to get number of products do you want per page',
         schema: new OA\Schema(type: 'string')
@@ -73,7 +73,7 @@ class ProductController extends AbstractController
             $item->tag("ProductsCache");
             if ($page > 0 and $limit == 0) {
                 $productsList = $productRepository->findAllProducts();
-                return $serializer->serialize($productsList, 'json',['groups' => 'getProducts']);
+                return $serializer->serialize($productsList, 'json', ['groups' => 'getProducts']);
             } else {
 
                 $productList = $productRepository->findAllWithPagination($page, $limit);
@@ -81,12 +81,10 @@ class ProductController extends AbstractController
 
                 $links = $fetchLink->generatePaginationLinks("products", $limit, $page, $productList_next);
 
-                $merge = $fetchLink->merge($productList,$links,"products");
+                $merge = $fetchLink->merge($productList, $links, "products");
 
-                return $serializer->serialize($merge, 'json',['groups' => 'getProducts', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
+                return $serializer->serialize($merge, 'json', ['groups' => 'getProducts', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
             }
-
-            
         });
 
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
@@ -124,17 +122,16 @@ class ProductController extends AbstractController
             $product = $productRepository->findById($id);
 
             if ($product) {
-                $links = $fetchLink->generateLinks("product",$id);
+                $links = $fetchLink->generateLinks("product", $id);
 
-                $merge = $fetchLink->merge($product,$links);
+                $merge = $fetchLink->merge($product, $links);
 
-                return $serializer->serialize($merge, 'json',['groups' => 'getProduct', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
+                return $serializer->serialize($merge, 'json', ['groups' => 'getProduct', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
             }
             return throw new HttpException('404', "The ID doesn't exists");
         });
         return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
     }
-
     #[Route('/products/{id}', name: 'delete_product', methods: 'DELETE')]
     public function deleteOneProductById(int $id, EntityManagerInterface $entityManagerInterface, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -148,7 +145,6 @@ class ProductController extends AbstractController
         }
         return throw new HttpException('404', "The ID doesn't exists");
     }
-
     #[Route('/products', name: 'create_product', methods: 'POST')]
     public function createProduct(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -157,13 +153,13 @@ class ProductController extends AbstractController
         $errors = $validator->validate($product);
 
         if ($errors->count() > 0) {
-            return new JsonResponse($serializer->serialize($errors, 'json',['groups' => 'getProducts']), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
+            return new JsonResponse($serializer->serialize($errors, 'json', ['groups' => 'getProducts']), JsonResponse::HTTP_BAD_REQUEST, [], 'true');
         }
 
         $entityManagerInterface->persist($product);
         $entityManagerInterface->flush();
         $cache->invalidateTags(['ProductsCache']);
-        $jsonProduct = $serializer->serialize($product, 'json',['groups' => 'getProducts']);
+        $jsonProduct = $serializer->serialize($product, 'json', ['groups' => 'getProducts']);
 
         return new JsonResponse($jsonProduct, Response::HTTP_CREATED, [], true);
     }

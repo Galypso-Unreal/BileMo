@@ -140,5 +140,4 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 }
