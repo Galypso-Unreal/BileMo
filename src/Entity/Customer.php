@@ -36,11 +36,13 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'customer', targetEntity: User::class)]
     private Collection $users;
 
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
-        
+
     }
+
 
     public function getId(): ?int
     {
@@ -48,11 +50,13 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     }
 
+
     public function getEmail(): ?string
     {
         return $this->email;
 
     }
+
 
     public function setEmail(string $email): static
     {
@@ -67,6 +71,8 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @see UserInterface
      */
+
+    
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -76,6 +82,8 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+
+    
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -85,6 +93,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
 
     }
+
 
     public function setRoles(array $roles): static
     {
@@ -97,11 +106,14 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
+
+    
     public function getPassword(): string
     {
         return $this->password;
 
     }
+
 
     public function setPassword(string $password): static
     {
@@ -114,6 +126,8 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+
+    
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
@@ -123,11 +137,14 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, User>
      */
+
+    
     public function getUsers(): Collection
     {
         return $this->users;
 
     }
+
 
     public function addUser(User $user): static
     {
@@ -140,6 +157,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     }
 
+    
     public function removeUser(User $user): static
     {
         if ($this->users->removeElement($user)) {

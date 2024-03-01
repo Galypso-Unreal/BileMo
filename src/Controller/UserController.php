@@ -58,6 +58,8 @@ class UserController extends AbstractController
      * hashing the password, and persisting the user in the database.
      * 
      */
+
+    
     public function createUser(UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
@@ -106,6 +108,8 @@ class UserController extends AbstractController
      * returns it as a JSON response.
      * Exemple of request with parameters : http://127.0.0.1:8000/api/users?page=1&limit=2
      */
+
+    
     public function getAllUsers(FetchLinks $fetchLink, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
 
@@ -167,6 +171,8 @@ class UserController extends AbstractController
      * and caches the result using a cache service.
      * Exemple of request with parameters : http://127.0.0.1:8000/api/users/2 : 2 is ID of user
      */
+
+    
     public function getOneUserById(FetchLinks $fetchLink, int $id, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
         /**
@@ -210,6 +216,8 @@ class UserController extends AbstractController
      * Exemple of request with parameters : http://127.0.0.1:8000/api/users/2
      * 
      */
+
+    
     public function deleteUser(int $id, UserRepository $userRepository, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $user = $userRepository->findOneById($id, $this->getUser());
@@ -221,6 +229,6 @@ class UserController extends AbstractController
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
         return throw new HttpException('404', "The ID doesn't exists");
-        
+
     }
 }

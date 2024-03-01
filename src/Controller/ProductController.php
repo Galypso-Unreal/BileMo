@@ -54,6 +54,7 @@ class ProductController extends AbstractController
     )]
     #[OA\Tag(name: 'products')]
 
+
     public function getAllProducts(FetchLinks $fetchLink, ProductRepository $productRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
 
@@ -112,6 +113,8 @@ class ProductController extends AbstractController
         schema: new OA\Schema(type: 'integer')
     )]
     #[OA\Tag(name: 'products')]
+
+
     public function getOneProductById(FetchLinks $fetchLink, int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
 
@@ -135,6 +138,8 @@ class ProductController extends AbstractController
 
     }
     #[Route('/products/{id}', name: 'delete_product', methods: 'DELETE')]
+
+
     public function deleteOneProductById(int $id, EntityManagerInterface $entityManagerInterface, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $product = $productRepository->find($id);
@@ -149,6 +154,8 @@ class ProductController extends AbstractController
 
     }
     #[Route('/products', name: 'create_product', methods: 'POST')]
+
+    
     public function createProduct(ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse
     {
         $product = $serializer->deserialize($request->getContent(), Product::class, 'json');
@@ -165,6 +172,6 @@ class ProductController extends AbstractController
         $jsonProduct = $serializer->serialize($product, 'json', ['groups' => 'getProducts']);
 
         return new JsonResponse($jsonProduct, Response::HTTP_CREATED, [], true);
-        
+
     }
 }

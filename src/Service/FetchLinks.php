@@ -8,10 +8,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class FetchLinks
 {
 
+    
     public function __construct(
         private UrlGeneratorInterface $router,
     ) {
     }
+
 
     public function generateLinks(string $name, $id): array
     {
@@ -61,6 +63,7 @@ class FetchLinks
         return $array;
     }
 
+
     public function generatePaginationLinks($name, $limit, $page, $repository): array
     {
 
@@ -97,6 +100,7 @@ class FetchLinks
 
     }
 
+
     public function merge(array $array1, array $array2, string $name = null)
     {
 
@@ -110,6 +114,6 @@ class FetchLinks
 
             return $array1 + $array2;
         }
-        
+
     }
 }
