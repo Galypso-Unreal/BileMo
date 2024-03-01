@@ -48,17 +48,18 @@ class UserController extends AbstractController
         description: 'The password (without encrypt) of user you want to add',
         schema: new OA\Schema(type: 'string')
     )]
-    #[OA\Parameter(
-        name: 'customer',
-        description: 'The field is an auto value of your customer id',
-        schema: new OA\Schema(type: 'integer')
-    )]
     #[OA\Tag(name: 'users')]
-    #[Security(name: 'Bearer')]
     #[Route('/users', name: 'create_user', methods: 'POST')]
     /**
      * This function creates a user by deserializing the request content, validating the user data,
      * hashing the password, and persisting the user in the database.
+     * type of json content to post : 
+     * {
+     *  'firstname' : 'John'
+     *  'lastname' : 'Doe'
+     *  'email' : 'johndoe@gmail.com'
+     *  'password' : 'yourpassword'
+     * }
      * 
      */
     public function createUser(UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManagerInterface,TagAwareCacheInterface $cache): JsonResponse
@@ -102,11 +103,11 @@ class UserController extends AbstractController
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'users')]
-    #[Security(name: 'Bearer')]
     #[Route('/users', name: 'users', methods: 'GET')]
     /**
      * This function retrieves a list of users from a repository, serializes it into JSON format, and
      * returns it as a JSON response.
+     * Exemple of request with parameters : http://127.0.0.1:8000/api/users?page=1&limit=2
      */
     public function getAllUsers(FetchLinks $fetchLink, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -165,11 +166,11 @@ class UserController extends AbstractController
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'users')]
-    #[Security(name: 'Bearer')]
     #[Route('/users/{id}', name: 'user', methods: 'GET')]
     /**
      * This function retrieves a user by their ID from a repository, serializes it into JSON format,
      * and caches the result using a cache service.
+     * Exemple of request with parameters : http://127.0.0.1:8000/api/users/2 : 2 is ID of user
      */
     public function getOneUserById(FetchLinks $fetchLink, int $id, UserRepository $userRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
@@ -207,10 +208,10 @@ class UserController extends AbstractController
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'users')]
-    #[Security(name: 'Bearer')]
     #[Route('/users/{id}', name: 'delete_user', methods: 'DELETE')]
     /**
      * The deleteUser function deletes a user from the database and invalidates the cache for products.
+     * Exemple of request with parameters : http://127.0.0.1:8000/api/users/2
      * 
      */
     public function deleteUser(int $id, UserRepository $userRepository, EntityManagerInterface $entityManagerInterface, TagAwareCacheInterface $cache): JsonResponse

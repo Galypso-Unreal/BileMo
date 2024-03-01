@@ -53,7 +53,7 @@ class ProductController extends AbstractController
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'products')]
-    #[Security(name: 'Bearer')]
+
     public function getAllProducts(FetchLinks $fetchLink, ProductRepository $productRepository, SerializerInterface $serializer, Request $request, TagAwareCacheInterface $cache): JsonResponse
     {
 
@@ -113,7 +113,6 @@ class ProductController extends AbstractController
         schema: new OA\Schema(type: 'integer')
     )]
     #[OA\Tag(name: 'products')]
-    #[Security(name: 'Bearer')]
     public function getOneProductById(FetchLinks $fetchLink, int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
 
