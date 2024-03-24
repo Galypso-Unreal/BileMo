@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Product;
 use App\Entity\Customer;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
@@ -44,19 +45,46 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $user = new Customer();
-        $user->setEmail("user@test.com");
-        $user->setRoles(["ROLE_USER"]);
-        $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+        $customer1 = new Customer();
+        $customer1->setEmail("customer1@test.com");
+        $customer1->setPassword($this->userPasswordHasher->hashPassword($customer1, "password"));
+        $customer1->setRoles(array('ROLE_USER'));
 
-        $manager->persist($user);
+        $manager->persist($customer1);
 
-        $userAdmin = new Customer();
-        $userAdmin->setEmail("admin@test.com");
-        $userAdmin->setRoles(["ROLE_ADMIN"]);
-        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
+        $customer2 = new Customer();
+        $customer2->setEmail("customer2@test.com");
+        $customer2->setPassword($this->userPasswordHasher->hashPassword($customer2, "password"));
+        $customer2->setRoles(array('ROLE_USER'));
 
-        $manager->persist($userAdmin);
+        $manager->persist($customer2);
+
+        /* set user for customer 1*/
+
+        for ($i = 0; $i < 5; $i++) {
+
+            $user = new User();
+            $user->setFirstname('User'.$i.'-'.'u1');
+            $user->setLastname('User'.$i.'last');
+            $user->setEmail('emailofuserc1-'.$i.'@gmail.com');
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+            $user->setCustomer($customer1);
+            $manager->persist($user);
+        }
+
+        /* set user for customer 2*/
+        
+        for ($i = 0; $i < 10; $i++) {
+
+            $user = new User();
+            $user->setFirstname('User'.$i.'-'.'u2');
+            $user->setLastname('User'.$i.'last');
+            $user->setEmail('emailofuserc2-'.$i.'@gmail.com');
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+            $user->setCustomer($customer2);
+            $manager->persist($user);
+
+        }
 
         // Create 20 products
         for ($i = 0; $i < 20; $i++) {
@@ -356,6 +384,7 @@ class AppFixtures extends Fixture
             $manager->persist($product);
 
             $this->cache->invalidateTags(['ProductsCache']);
+            $this->cache->invalidateTags(['UsersCache']);
         }
 
         $manager->flush();
