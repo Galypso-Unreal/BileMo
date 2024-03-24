@@ -48,8 +48,28 @@ Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre
     php bin/console doctrine:database:create
     php bin/console doctrine:schema:create
     ```
+5. **Configuration de Lexik JWT**
 
-5. **Chargement des fixtures**
+    Générez une paire de clés publique/privée pour Lexik JWT en utilisant la commande suivante :
+
+    ```bash
+    mkdir -p config/jwt
+    openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+    openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
+    ```
+
+    Lorsque vous exécutez ces commandes, on vous demandera de saisir une passphrase. Assurez-vous de conserver cette passphrase en sécurité, car elle sera nécessaire pour utiliser les clés générées.
+
+    Après avoir généré les clés, configurez les chemins vers ces clés dans votre fichier `.env.local` :
+
+    ```bash
+    JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+    JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+    JWT_PASSPHRASE=password (modifer avec votre mot de passe)
+    ```
+
+    Si des problèmes persistent lors de l'installation n'oubliez pas de consulter la documentation de [Lexik JWT](https://symfony.com/bundles/LexikJWTAuthenticationBundle/current/index.html)
+6. **Chargement des fixtures**
 
     Pour charger les données de test dans la base de données, exécutez :
 
@@ -57,7 +77,7 @@ Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre
     php bin/console doctrine:fixtures:load
     ```
 
-6. **Démarrer le serveur local**
+7. **Démarrer le serveur local**
 
     Vous pouvez maintenant démarrer le serveur Symfony en exécutant la commande suivante :
 
@@ -67,7 +87,7 @@ Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre
 
     Le serveur devrait démarrer sur `http://localhost:8000` par défaut.
 
-7. **Utilisation de l'API**
+8. **Utilisation de l'API**
 
     Vous pouvez maintenant utiliser l'API de BileMo en accédant à l'URL de base `http://localhost:8000/api`.
 
