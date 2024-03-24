@@ -1,74 +1,78 @@
-<h1>BileMo</h1>
+# BileMo
 
-<p>BileMo est un projet Symfony 6 conçu pour fournir une API pour une entreprise fictive vendant des téléphones mobiles.</p>
+BileMo est un projet Symfony 6 conçu pour fournir une API pour une entreprise fictive vendant des téléphones mobiles.
 
-<h2>Installation</h2>
+## Installation
 
-<h3>Prérequis</h3>
+### Prérequis
 
-<p>Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre système :</p>
-<ul>
-    <li>PHP 8.1 ou supérieur</li>
-    <li>Composer (<a href="https://getcomposer.org/">https://getcomposer.org/</a>)</li>
-    <li>Symfony CLI (<a href="https://symfony.com/download">https://symfony.com/download</a>)</li>
-    <li>MySQL ou tout autre système de gestion de base de données pris en charge par Symfony</li>
-</ul>
+Avant de commencer, assurez-vous d'avoir installé les outils suivants sur votre système :
 
-<h3>Étapes d'installation</h3>
+- PHP 8.1 ou supérieur
+- Composer (https://getcomposer.org/)
+- Symfony CLI (https://symfony.com/download)
+- MySQL ou tout autre système de gestion de base de données pris en charge par Symfony
 
-<ol>
-    <li><strong>Cloner le dépôt</strong></li>
+### Étapes d'installation
 
-    <p><code>git clone https://github.com/Galypso-Unreal/BileMo.git</code></p>
+1. **Cloner le dépôt**
 
-    <li><strong>Installer les dépendances</strong></li>
+    ```bash
+    git clone https://github.com/Galypso-Unreal/BileMo.git
+    ```
 
-    <p>Accédez au répertoire du projet et exécutez la commande suivante pour installer les dépendances :</p>
-    <pre><code>cd BileMo
+2. **Installer les dépendances**
 
-composer install
-</code></pre>
+    Accédez au répertoire du projet et exécutez la commande suivante pour installer les dépendances :
 
-    <li><strong>Configuration de la base de données</strong></li>
+    ```bash
+    cd BileMo
+    composer install
+    ```
 
-    <p>Dupliquez le fichier <code>.env</code> et nommez-le <code>.env.local</code>. Modifiez ce fichier pour configurer votre base de données :</p>
-    <pre><code>DATABASE_URL=mysql://user:password@localhost:3306/bilemo
+3. **Configuration de la base de données**
 
-</code></pre>
+    Dupliquez le fichier `.env` et nommez-le `.env.local`. Modifiez ce fichier pour configurer votre base de données :
 
-<p>Remplacez <code>user</code> et <code>password</code> par votre nom d'utilisateur et mot de passe de base de données respectivement, et <code>bilemo</code> par le nom de votre base de données.</p>
+    ```bash
+    DATABASE_URL=mysql://user:password@localhost:3306/bilemo
+    ```
 
-    <li><strong>Création de la base de données</strong></li>
+    Remplacez `user` et `password` par votre nom d'utilisateur et mot de passe de base de données respectivement, et `bilemo` par le nom de votre base de données.
 
-    <p>Exécutez les commandes suivantes pour créer la base de données et les schémas associés :</p>
-    <pre><code>php bin/console doctrine:database:create
+4. **Création de la base de données**
 
-php bin/console doctrine:schema:create
-</code></pre>
+    Exécutez les commandes suivantes pour créer la base de données et les schémas associés :
 
-    <li><strong>Chargement des fixtures</strong></li>
+    ```bash
+    php bin/console doctrine:database:create
+    php bin/console doctrine:schema:create
+    ```
 
-    <p>Pour charger les données de test dans la base de données, exécutez :</p>
-    <pre><code>php bin/console doctrine:fixtures:load
+5. **Chargement des fixtures**
 
-</code></pre>
+    Pour charger les données de test dans la base de données, exécutez :
 
-    <li><strong>Démarrer le serveur local</strong></li>
+    ```bash
+    php bin/console doctrine:fixtures:load
+    ```
 
-    <p>Vous pouvez maintenant démarrer le serveur Symfony en exécutant la commande suivante :</p>
-    <pre><code>symfony serve
+6. **Démarrer le serveur local**
 
-</code></pre>
+    Vous pouvez maintenant démarrer le serveur Symfony en exécutant la commande suivante :
 
-<p>Le serveur devrait démarrer sur <code>http://localhost:8000</code> par défaut.</p>
+    ```bash
+    symfony serve
+    ```
 
-    <li><strong>Utilisation de l'API</strong></li>
+    Le serveur devrait démarrer sur `http://localhost:8000` par défaut.
 
-    <p>Vous pouvez maintenant utiliser l'API de BileMo en accédant à l'URL de base <code>http://localhost:8000/api</code>.</p>
+7. **Utilisation de l'API**
 
-</ol>
+    Vous pouvez maintenant utiliser l'API de BileMo en accédant à l'URL de base `http://localhost:8000/api`.
 
-<h2>Documentation</h2>
+## Documentation
 
-<p>La documentation de l'API est disponible à l'adresse suivante en local:</p>
-<p><a href="http://localhost:8000/api/doc">http://localhost:8000/api/doc</a></p>
+La documentation de l'API est disponible à l'adresse suivante en local:
+
+[Documentation de l'API](http://localhost:8000/api/doc)
