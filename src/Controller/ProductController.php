@@ -40,14 +40,14 @@ class ProductController extends AbstractController
     )]
     #[OA\Parameter(
         name: 'page',
-        in: 'path',
+        in: 'query',
         required: false,
         description: 'The field used to get number of page do you want to recive',
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Parameter(
         name: 'limit',
-        in: 'path',
+        in: 'query',
         required: false,
         description: 'The field used to get number of products do you want per page',
         schema: new OA\Schema(type: 'string')
@@ -62,7 +62,7 @@ class ProductController extends AbstractController
         $limit = $request->get('limit', 0);
 
         if ($page <= 0 or $limit < 0) {
-            return throw new HttpException('404', "page need to be 1 or more and limit can be 0 or more");
+            return throw new HttpException(Response::HTTP_BAD_REQUEST, "page need to be 1 or more and limit can be 0 or more");
         }
 
         /**
@@ -89,7 +89,6 @@ class ProductController extends AbstractController
         });
 
         return new JsonResponse($jsonProductsList, Response::HTTP_OK, [], true);
-
     }
 
     #[Route('/products/{id}', name: 'product', methods: 'GET')]
@@ -132,7 +131,7 @@ class ProductController extends AbstractController
 
                 return $serializer->serialize($merge, 'json', ['groups' => 'getProduct', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
             }
-            return throw new HttpException('404', "The ID doesn't exists");
+            return throw new HttpException(Response::HTTP_NOT_FOUND, "The ID doesn't exists");
         });
         return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
 
@@ -140,6 +139,11 @@ class ProductController extends AbstractController
     #[Route('/products/{id}', name: 'delete_product', methods: 'DELETE')]
 
 
+    /**
+     * ATTENTION THE TWO FOLLOWING FUNCTIONS ARE FOR INDICATIVE PURPOSES, 
+     * it will not be present for the final customer! This highlights BileMo's ability to add products for future customers.
+     * It also highlights WHEN to delete the cache.
+     */
     public function deleteOneProductById(int $id, EntityManagerInterface $entityManagerInterface, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cache): JsonResponse
     {
         $product = $productRepository->find($id);
@@ -150,7 +154,7 @@ class ProductController extends AbstractController
             $entityManagerInterface->flush();
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
-        return throw new HttpException('404', "The ID doesn't exists");
+        return throw new HttpException(Response::HTTP_NOT_FOUND, "The ID doesn't exists");
 
     }
     #[Route('/products', name: 'create_product', methods: 'POST')]

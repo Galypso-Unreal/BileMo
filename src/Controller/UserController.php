@@ -75,7 +75,7 @@ class UserController extends AbstractController
         $entityManagerInterface->persist($user);
         $entityManagerInterface->flush();
 
-        return new JsonResponse(json_encode(["response" => "User has been created"]), Response::HTTP_CREATED, [], true);
+        return new JsonResponse(json_encode(["status"=>Response::HTTP_CREATED,"message" => "User has been created"]), Response::HTTP_CREATED, [], true);
 
     }
 
@@ -89,14 +89,14 @@ class UserController extends AbstractController
     )]
     #[OA\Parameter(
         name: 'page',
-        in: 'path',
+        in: 'query',
         required: false,
         description: 'The field used to get number of page do you want to recive',
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Parameter(
         name: 'limit',
-        in: 'path',
+        in: 'query',
         required: false,
         description: 'The field used to get number of users do you want per page',
         schema: new OA\Schema(type: 'string')
@@ -117,7 +117,7 @@ class UserController extends AbstractController
         $limit = $request->get('limit', 0);
 
         if ($page <= 0 or $limit < 0) {
-            return throw new HttpException('404', "page need to be 1 or more and limit can be 0 or more");
+            return throw new HttpException(Response::HTTP_BAD_REQUEST, "page need to be 1 or more and limit can be 0 or more");
         }
 
         /**
@@ -128,24 +128,28 @@ class UserController extends AbstractController
         $jsonUsersList = $cache->get($idCache, function (ItemInterface $item) use ($userRepository, $page, $limit, $serializer, $fetchLink) {
             $item->tag("UsersCache");
 
-            if ($page > 0 and $limit === 0) {
-                $usersList = $userRepository->findAllUsers($this->getUser());
-
-                return $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
-            } else {
-
-                $usersList = $userRepository->findAllWithPagination($page, $limit);
-                $userList_next = $userRepository->findAllWithPagination($page + 1, $limit);
-
-                $links = $fetchLink->generatePaginationLinks("users", $limit, $page, $userList_next);
-
-                $merge = $fetchLink->merge($usersList, $links, "users");
-
-                return $serializer->serialize($merge, 'json', ['groups' => 'getUsers', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
+            if($this->getUser()){
+                if ($page > 0 and $limit === 0) {
+                    $usersList = $userRepository->findAllUsers($this->getUser());
+    
+                    return $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
+                } else {
+    
+                        $usersList = $userRepository->findAllWithPagination($page, $limit,$this->getUser());
+                        $userList_next = $userRepository->findAllWithPagination($page + 1, $limit,$this->getUser());
+    
+                        $links = $fetchLink->generatePaginationLinks("users", $limit, $page, $userList_next);
+    
+                        $merge = $fetchLink->merge($usersList, $links, "users");
+    
+                        return $serializer->serialize($merge, 'json', ['groups' => 'getUsers', 'json_encode_options' => JSON_UNESCAPED_SLASHES]);
+                }
             }
+            return throw new HttpException(Response::HTTP_UNAUTHORIZED, "You need to be connected");
+            
         });
 
-        return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
+        return new JsonResponse($jsonUsersList, Response::HTTP_CREATED, [], true);
 
     }
 
@@ -192,10 +196,9 @@ class UserController extends AbstractController
 
                 return $serializer->serialize($merge, 'json', ['groups' => 'getUsers', 'json_encode_options' => JSON_UNESCAPED_SLASHES],);
             }
-            return throw new HttpException('404', "The ID doesn't exists");
+            return throw new HttpException(Response::HTTP_NOT_FOUND, "The ID doesn't exists");
         });
-        return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
-
+        return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 
     #[OA\Response(
@@ -226,9 +229,9 @@ class UserController extends AbstractController
             $cache->invalidateTags(['UsersCache']);
             $entityManagerInterface->remove($user);
             $entityManagerInterface->flush();
-            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT,[],false);
         }
-        return throw new HttpException('404', "The ID doesn't exists");
+        return throw new HttpException(Response::HTTP_NOT_FOUND, "The ID doesn't exists");
 
     }
 }
