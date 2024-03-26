@@ -48,10 +48,12 @@ class UserRepository extends ServiceEntityRepository
             ->getResult(ORMQuery::HYDRATE_ARRAY);
     }
 
-    public function findAllWithPagination($page, $limit)
+    public function findAllWithPagination($page, $limit,$value1)
     {
         $query = $this->createQueryBuilder('u')
             ->select('u.id, u.email')
+            ->andWhere('u.customer = :val1')
+            ->setParameter('val1', $value1)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
         return $query->getQuery()->getResult(ORMQuery::HYDRATE_ARRAY);
