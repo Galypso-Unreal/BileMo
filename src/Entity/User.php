@@ -60,12 +60,12 @@ class User implements PasswordAuthenticatedUserInterface
         minMessage: 'Your password must be at least {{ limit }} characters long',
         maxMessage: 'Your password cannot be longer than {{ limit }} characters',
     )]
-    #[Groups(['getUsers', 'createUser'])]
+    #[Groups(['createUser'])]
     private ?string $password = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['getUsers'])]
+
     private ?Customer $customer = null;
 
     public function getId(): ?int
