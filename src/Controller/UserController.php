@@ -149,7 +149,7 @@ class UserController extends AbstractController
             
         });
 
-        return new JsonResponse($jsonUsersList, Response::HTTP_CREATED, [], true);
+        return new JsonResponse($jsonUsersList, Response::HTTP_OK, [], true);
 
     }
 
@@ -198,7 +198,7 @@ class UserController extends AbstractController
             }
             return throw new HttpException(Response::HTTP_NOT_FOUND, "The ID doesn't exists");
         });
-        return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
+        return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
     }
 
     #[OA\Response(
