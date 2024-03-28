@@ -75,7 +75,6 @@ class UserRepository extends ServiceEntityRepository
     public function findOneById($value, $value2): ?User
     {
         return $this->createQueryBuilder('u')
-            ->select('u.id,u.firstname,u.lastname,u.email')
             ->where('u.id = :val')
             ->setParameter('val', $value)
             ->andWhere('u.customer = :val2')
